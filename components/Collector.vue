@@ -8,7 +8,8 @@ export default {
     id: 'collector-payment',
     containerId: 'collector-payment-iframe',
     src: 'https://checkout-uat.collector.se/collector-checkout-loader.js',
-    token: 'public-SE-2a0a290c184b1d840705fbb208fea241aa03322e34344b95'
+    token: null,
+    lang: null
   }),
   mounted() {
     this.isLoaded = document.getElementById(this.id)
@@ -17,7 +18,8 @@ export default {
       return
     }
 
-    this.$nextTick(() => {
+    this.$nextTick(async () => {
+      await this.fetchConfig()
       this.bootstrap()
     })
   },
@@ -27,6 +29,13 @@ export default {
     })
   },
   methods: {
+    async fetchConfig() {
+      const response = await fetch('http://api/payment-endpoint')
+      const {token, lang} = response.json()
+
+      this.token = token
+      this.lang = lang
+    },
     bootstrap() {
       const { src, id, token, containerId } = this
 
@@ -49,8 +58,3 @@ export default {
   }
 }
 </script>
-<style>
-#collector-payment {
-  display: none;
-}
-</style>
