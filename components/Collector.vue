@@ -1,5 +1,5 @@
 <template>
-  <div ref="iframe" style="width: 100%"></div>
+  <div :id="containerId" style="width: 100%"></div>
 </template>
 
 <script>
@@ -7,6 +7,7 @@ export default {
   data: () => ({
     isLoaded: false,
     id: 'collector-payment',
+    containerId: 'collector-payment-iframe',
     src: 'https://checkout-uat.collector.se/collector-checkout-loader.js',
     token: 'public-SE-2a0a290c184b1d840705fbb208fea241aa03322e34344b95'
   }),
@@ -17,7 +18,9 @@ export default {
       return
     }
 
-    this.bootstrap()
+    this.$nextTick(() => {
+      this.bootstrap()
+    })
   },
   beforeDestroy() {
     this.$nextTick(() => {
@@ -26,33 +29,18 @@ export default {
   },
   methods: {
     bootstrap() {
-      const { src, id, token } = this
-
-      document.body.addEventListener('DOMNodeInserted', this.listenForIframe)
+      const { src, id, token, containerId } = this
 
       const script = document.createElement('script')
       script.setAttribute('src', src)
       script.setAttribute('id', id)
+      script.setAttribute('data-container-id', containerId)
       script.setAttribute('data-token', token)
       script.setAttribute('data-lang', 'sv-SE')
 
       document.body.appendChild(script)
     },
-    listenForIframe(e) {
-      const { target } = e
-      if (target.className !== 'collector-checkout-iframe') {
-        return
-      }
 
-      this.moveIframe(target)
-      this.stopListeningForIframe()
-    },
-    stopListeningForIframe() {
-      document.body.removeEventListener('DOMNodeInserted', this.listenForIframe)
-    },
-    moveIframe(iframe) {
-      this.$refs.iframe.appendChild(iframe)
-    },
     clear() {
       const script = document.getElementById(this.id)
       if (script) {
