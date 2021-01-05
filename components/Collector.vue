@@ -1,7 +1,6 @@
 <template>
   <div :id="containerId" style="width: 100%"></div>
 </template>
-
 <script>
 export default {
   data: () => ({
