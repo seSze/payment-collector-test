@@ -31,10 +31,11 @@ export default {
   methods: {
     async fetchConfig() {
       const response = await fetch('http://api/payment-endpoint')
-      const {token, lang} = response.json()
+      const {token, lang, src} = response.json()
 
       this.token = token
       this.lang = lang
+      this.src = src
     },
     bootstrap() {
       const { src, id, token, containerId } = this
